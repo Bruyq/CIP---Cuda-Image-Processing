@@ -1,9 +1,8 @@
 #include "image.h"
 
-/* Image object constructor
-* Loads an image from file and create an Image object
-* Parameter : filename (char_ptr)
-*/
+// Image object constructor
+// Loads an image from file and create an Image object
+// Parameter : filename (char_ptr)
 Image::Image(char* filename)
 {
     m_data = stbi_load(filename, &m_width, &m_height, &m_channels, 3);
@@ -14,10 +13,9 @@ Image::Image(char* filename)
     }
 }
 
-/* Image object constructor
-* Creates an Image object
-* Parameter : width (int), height (int), number of channels (int)
-*/
+// Image object constructor
+// Creates an Image object
+// Parameter : width (int), height (int), number of channels (int)
 Image::Image(int width, int height, int channels)
 {
     m_width = width;
@@ -26,48 +24,42 @@ Image::Image(int width, int height, int channels)
     m_data = new unsigned char[m_width * m_height * m_channels];
 }
 
-/* Image object destructor
-*/
+// Image object destructor
 Image::~Image()
 {
     delete[] m_data;
 }
 
-/* Image getWidth method
-* Gives image width member (int)
-*/
+// Image getWidth method
+// Gives image width member (int)
 int Image::getWidth()
 {
     return m_width;
 }
 
-/* Image getHeight method
-* Gives image height member (int)
-*/
+// Image getHeight method
+// Gives image height member (int)
 int Image::getHeight()
 {
     return m_height;
 }
 
-/* Image getChannels method
-* Gives image number of channels member (int)
-*/
+// Image getChannels method
+// Gives image number of channels member (int)
 int Image::getChannels()
 {
     return m_channels;
 }
 
-/* Image getSize method
-* Gives image size (int) where size is width x height x number of channels
-*/
+// Image getSize method
+// Gives image size (int) where size is width x height x number of channels
 int Image::getSize()
 {
     return m_height * m_width * m_channels;
 }
 
-/* Image printData method
-* Write the data to a std::cout output
-*/
+// Image printData method
+// Write the data to a std::cout output
 void Image::printData()
 {
     for (int j = 0; j < m_height; j++)
@@ -82,10 +74,9 @@ void Image::printData()
     return;
 }
 
-/* Image saveDataInPPM method
-* Write the data to a ppm file
-* Parameter : filename (const char*)
-*/
+// Image saveDataInPPM method
+// Write the data to a ppm file
+// Parameter : filename (const char*)
 void Image::saveDataInPPM(const char* filename)
 {
     std::ofstream ofs(filename);
@@ -103,18 +94,16 @@ void Image::saveDataInPPM(const char* filename)
     return;
 }
 
-/* Image getData method
-* Gives image pointer to the data (unsigned char)
-*/
+// Image getData method
+// Gives image pointer to the data (unsigned char)
 unsigned char* Image::getData()
 {
     return m_data;
 }
 
-/* Image save method
-* Saves the image under the filename specified (png format)
-* Parameter : filename (char_ptr)
-*/
+// Image save method
+// Saves the image under the filename specified (png format)
+// Parameter : filename (char_ptr)
 void Image::save(const char* filename)
 {
     stbi_write_png(filename, m_width, m_height, m_channels, m_data, m_width * m_channels); 
