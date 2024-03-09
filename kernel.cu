@@ -1,5 +1,10 @@
 ﻿#include "kernel.cuh"
 
+// Applies mean filter to the data
+// Parameters : 
+// - "width", "height", "channels" for image dimensions
+// - "radius" for mean filter radius
+// - "dest" stands for destination data and "src" for source data
 __global__ void meanFilterKernel(unsigned char* dest, const unsigned char* src, int width, int height, int radius, int channels)
 {
     int x = threadIdx.x + blockIdx.x * blockDim.x;
@@ -28,6 +33,11 @@ __global__ void meanFilterKernel(unsigned char* dest, const unsigned char* src, 
 }
 
 
+// Applies unsharp masking to the data (performs detail enhancement)
+// Parameters : 
+// - "width", "height", "channels" for image dimensions
+// - "factor" for detail amplification factor
+// - "dest" stands for destination data, "src" for source data and "smoothed" is the smoothed version of src data
 __global__ void unsharpMaskingKernel(unsigned char* dest, const unsigned char* src, const unsigned char* smoothed, int width, int height, float factor, int channels)
 {
     int x = threadIdx.x + blockIdx.x * blockDim.x;
@@ -44,6 +54,10 @@ __global__ void unsharpMaskingKernel(unsigned char* dest, const unsigned char* s
 }
 
 
+// Applies laplacian filter to the data (useful for edge detection)
+// Parameters : 
+// - "width", "height", "channels" for image dimensions
+// - "dest" stands for destination data and "src" for source data
 __global__ void laplacianFilterKernel(unsigned char* dest, const unsigned char* src, int width, int height, int channels)
 {
     int x = threadIdx.x + blockIdx.x * blockDim.x;
@@ -75,6 +89,10 @@ __global__ void laplacianFilterKernel(unsigned char* dest, const unsigned char* 
 }
 
 
+// Generates test image data displaying color gradients
+// Parameters : 
+// - "width", "height", "channels" for image dimensions
+// - "dest" stands for destination data and "src" for source data
 __global__ void generateRGBKernel(unsigned char* dest, int width, int height)
 {
     // Block dim must be (3, 1) so we can know the channel we are working on
@@ -99,6 +117,13 @@ __global__ void generateRGBKernel(unsigned char* dest, int width, int height)
 }
 
 
+// Pads image data with "replicate" option 
+// Example : 
+// - (10, 0, 23), (50, 60, 41), (23, 23, 23) | (23, 23, 23), (50, 60, 41), (10, 0, 23) where "|" is initial image border
+// Parameters :
+// - "width", "height", "channels" for image dimensions
+// - "radius" is equal to the padding length on borders
+// - "dest" stands for destination data and "src" for source data
 __global__ void replicateKernel(unsigned char* dest, const unsigned char* src, int width, int height, int radius, int channels)
 {
     int x = threadIdx.x + blockIdx.x * blockDim.x;
@@ -229,6 +254,11 @@ __global__ void replicateKernel(unsigned char* dest, const unsigned char* src, i
 }
 
 
+// Crops image data
+// Parameters :
+// - "width", "height", "channels" for destination data dimensions
+// - "widhtInit" for source data width and "(posX, posY)" is upper-left starting point for cropping in source image data
+// - "dest" stands for destination data and "src" for source data
 __global__ void cropKernel(unsigned char* dest, const unsigned char* src, int posX, int posY, int width, int height, int widthInit, int channels)
 {
     int x = threadIdx.x + blockIdx.x * blockDim.x;
@@ -242,6 +272,11 @@ __global__ void cropKernel(unsigned char* dest, const unsigned char* src, int po
 }
 
 
+// Applies the first step for guided filter smoothing technique
+// Parameters :
+// - "width", "height", "channels" for destination data dimensions
+// - "radius" gives the kernel radius for local mean and local variance computation
+// - "ak" and "bk" are kernel data outputs and "src" for source data
 __global__ void guidedFirstKernel(float* ak, float* bk, const unsigned char* src, int width, int height, int radius, int channels)
 {
     int x = threadIdx.x + blockIdx.x * blockDim.x;
@@ -279,6 +314,11 @@ __global__ void guidedFirstKernel(float* ak, float* bk, const unsigned char* src
 }
 
 
+// Applies the second step for guided filter smoothing technique
+// Parameters :
+// - "width", "height", "channels" for destination data dimensions
+// - "radius" gives the kernel radius for the local average computation
+// - "dest" stands for destination data, "ak" and "bk" are data inputs and "src" stands for source data
 __global__ void guidedSecondKernel(unsigned char* dest, const float* ak, const float* bk, const unsigned char* src, int width, int height, int radius, int channels)
 {
     int x = threadIdx.x + blockIdx.x * blockDim.x;
@@ -312,6 +352,80 @@ __global__ void guidedSecondKernel(unsigned char* dest, const float* ak, const f
 }
 
 
+// Thresholds and binarize image data based on a specific channel.
+// Parameters :
+// - "width", "height", "channels" for destination data dimensions
+// - "target_channel" is an integer that selects the channel to work on : 0 for red channel, 2 for blue, any other value for green
+// - "threshold" selects the threshold value. Values higher or equal will be white (255), other values will be black (0). "treshold" should be in [0, 255]
+// - "dest" stands for destination data and "src" for source data
+__global__ void binarizeKernel(unsigned char* dest, unsigned char* src, int width, int height, int target_channel, int threshold, int channels)
+{
+    int x = threadIdx.x + blockIdx.x * blockDim.x;
+    int y = threadIdx.y + blockIdx.y * blockDim.y;
+    if (x < width * channels && y < height)
+    {
+        int index = (y * width + x) * channels;
+ 
+        if (target_channel == 0 && channels == 3)                        // Thread working on red channel
+        {
+            if (src[index] >= threshold)
+            {
+                dest[index] = 255;
+                dest[index + 1] = 255;
+                dest[index + 2] = 255;
+            }
+            else
+            {
+                dest[index] = 0;
+                dest[index + 1] = 0;
+                dest[index + 2] = 0;
+            }
+        }
+        else if (target_channel == 2 && channels == 3)             // Thread working on blue channel
+        {
+            if (src[index + 2] >= threshold)
+            {
+                dest[index] = 255;
+                dest[index + 1] = 255;
+                dest[index + 2] = 255;
+            }
+            else
+            {
+                dest[index] = 0;
+                dest[index + 1] = 0;
+                dest[index + 2] = 0;
+            }
+        }
+        else if (channels == 3)                                    // Thread working on green channel
+        {
+            if (src[index + 1] >= threshold) 
+            {
+                dest[index] = 255;
+                dest[index + 1] = 255;
+                dest[index + 2] = 255;
+            }
+            else
+            {
+                dest[index] = 0;
+                dest[index + 1] = 0;
+                dest[index + 2] = 0;
+            }
+        }
+        else                                                        // When working with 1 channel image
+        {
+            if (src[index] >= threshold)
+            {
+                dest[index] = 255;
+            }
+            else
+            {
+                dest[index] = 0;
+            }
+        }
+    }
+}
+
+// TODO
 __global__ void computeHistogramKernel(unsigned int* hist, unsigned char* src, int width, int height, int channels, int nbins)
 {
     int x = threadIdx.x + blockIdx.x * blockDim.x;

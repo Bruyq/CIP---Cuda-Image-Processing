@@ -6,6 +6,8 @@
 #include <iostream>
 #include <fstream>
 
+
+// Class to handle image data
 class Image
 {
 protected:

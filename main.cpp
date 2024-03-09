@@ -23,10 +23,7 @@ int main()
     
 
     // Process image
-    //guidedFilterSmoothing(res, img, radius);
-    guidedFilterEnhancement(res, img, radius, 1.f);
-    //replicate(res, img, radius);
-    //laplacianFilter(res, img);
+    binarize(res, img, 0, 120);
 
     // File saving routine
     char dest[50];

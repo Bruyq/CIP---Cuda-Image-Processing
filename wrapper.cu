@@ -13,6 +13,10 @@ void check_cuda(cudaError_t result, char const* const func, const char* const fi
 }
 
 
+// Applies mean filter to an image (Wrapper function for corresponding kernel)
+// Parameters :
+// - "radius" for local averaging kernel radius
+// - "dst" image is destination image, "src" image is source image
 __host__ void meanFilter(Image& dst, Image& src, int radius)
 {
     // Verify that sizes are the same
@@ -52,7 +56,7 @@ __host__ void meanFilter(Image& dst, Image& src, int radius)
 
 
         // Crop the result to get relevant data
-        crop(d_src, d_padded2, radius, radius, src.getWidth(), src.getHeight(), paddedWidth, paddedHeight, src.getChannels());
+        crop(d_src, d_padded2, radius, radius, src.getWidth(), src.getHeight(), paddedWidth, src.getChannels());
 
         // Retrieve result to host memory
         checkCudaErrors(cudaMemcpy(dst.getData(), d_src, baseSize, cudaMemcpyDeviceToHost));
@@ -65,6 +69,9 @@ __host__ void meanFilter(Image& dst, Image& src, int radius)
 }
 
 
+// Applies laplacian filter to an image (Wrapper function for corresponding kernel)
+// Parameters :
+// - "dst" image is destination image, "src" image is source image
 __host__ void laplacianFilter(Image& dst, Image& src)
 {
     // Verify that sizes are the same
@@ -104,7 +111,7 @@ __host__ void laplacianFilter(Image& dst, Image& src)
 
 
         // Crop the result to get relevant data
-        crop(d_src, d_padded2, 1, 1, src.getWidth(), src.getHeight(), paddedWidth, paddedHeight, src.getChannels());
+        crop(d_src, d_padded2, 1, 1, src.getWidth(), src.getHeight(), paddedWidth, src.getChannels());
 
         // Retrieve result to host memory
         checkCudaErrors(cudaMemcpy(dst.getData(), d_src, baseSize, cudaMemcpyDeviceToHost));
@@ -117,6 +124,9 @@ __host__ void laplacianFilter(Image& dst, Image& src)
 }
 
 
+// Generates an image displaying color gradients (Wrapper function for corresponding kernel)
+// Parameters :
+// - "img" is the result of this function
 __host__ void generateRGB(Image& img)
 {
     // Initialisation
@@ -139,6 +149,10 @@ __host__ void generateRGB(Image& img)
 }
 
 
+// Pads image with "replicate" option  (Wrapper function for corresponding kernel)
+// Parameters :
+// - "radius" for padding length
+// - "dst" is for destination image , "src" is for source image
 __host__ void replicate(Image& dst, Image& src, int radius)
 {
     // Verify radius is below (img1_dims/2 + 1) and that img1 dims are superior to img2 dims
@@ -175,6 +189,11 @@ __host__ void replicate(Image& dst, Image& src, int radius)
 }
 
 
+// Pads image data with "replicate" option  (Wrapper function for corresponding kernel)
+// Parameters :
+// - "width", "height", "channels" for image dimensions
+// - "radius" for padding length
+// - "d_dest" device data is for destination data , "d_src" device data is for source data
 __host__ void replicate(unsigned char* d_dest, unsigned char* d_src, int width, int height, int radius, int channels)
 {
     // Initialisation
@@ -191,6 +210,11 @@ __host__ void replicate(unsigned char* d_dest, unsigned char* d_src, int width, 
 }
 
 
+// Crops an image (Wrapper function for corresponding kernel)
+// Parameters :
+// - "width", "height" are for destination image dimensions
+// - "(posX, posY)" is upper-left starting point for cropping in source image
+// - "dst" is for destination image , "src" is for source image
 __host__ void crop(Image& dst, Image& src, int posX, int posY, int width, int height)
 {
     // Verify size requirements
@@ -213,7 +237,7 @@ __host__ void crop(Image& dst, Image& src, int posX, int posY, int width, int he
         checkCudaErrors(cudaMemcpy(d_src, src.getData(), src.getSize() * sizeof(unsigned char), cudaMemcpyHostToDevice));
 
         // Call device function
-        crop(d_dest, d_src, posX, posY, dst.getWidth(), dst.getHeight(), src.getWidth(), src.getHeight(), dst.getChannels());
+        crop(d_dest, d_src, posX, posY, dst.getWidth(), dst.getHeight(), src.getWidth(), dst.getChannels());
 
         // Retrieve in host memory
         checkCudaErrors(cudaMemcpy(dst.getData(), d_dest, dst.getSize() * sizeof(unsigned char), cudaMemcpyDeviceToHost));
@@ -225,7 +249,13 @@ __host__ void crop(Image& dst, Image& src, int posX, int posY, int width, int he
 }
 
 
-__host__ void crop(unsigned char* d_dest, unsigned char* d_src, int posX, int posY, int width, int height, int widthInit, int heightInit, int channels)
+// Crops an image (Wrapper function for corresponding kernel)
+// Parameters :
+// - "width", "height", "channels" are for destination image data dimensions
+// - "widthInit" is for source image width
+// - "(posX, posY)" is upper-left starting point for cropping in source image data
+// - "d_dest" device data is for destination data , "d_src" device data is for source data
+__host__ void crop(unsigned char* d_dest, unsigned char* d_src, int posX, int posY, int width, int height, int widthInit, int channels)
 {
     // Initialisation
     clock_t timer;
@@ -241,6 +271,10 @@ __host__ void crop(unsigned char* d_dest, unsigned char* d_src, int posX, int po
 }
 
 
+// Applies guided filter smoothing technique
+// Parameters :
+// - "radius" for kernel radius
+// - "dst" is for destination image , "src" is for source image
 __host__ void guidedFilterSmoothing(Image& dst, Image& src, int radius)
 {
     // Verify that sizes are the same
@@ -284,7 +318,7 @@ __host__ void guidedFilterSmoothing(Image& dst, Image& src, int radius)
         checkCudaErrors(cudaDeviceSynchronize());
 
         // Crop the result to get relevant data
-        crop(d_src, d_padded2, 2 * radius, 2 * radius, src.getWidth(), src.getHeight(), paddedWidth, paddedHeight, src.getChannels());
+        crop(d_src, d_padded2, 2 * radius, 2 * radius, src.getWidth(), src.getHeight(), paddedWidth, src.getChannels());
 
         // Retrieve result to host memory
         checkCudaErrors(cudaMemcpy(dst.getData(), d_src, baseSize, cudaMemcpyDeviceToHost));
@@ -300,6 +334,11 @@ __host__ void guidedFilterSmoothing(Image& dst, Image& src, int radius)
 }
 
 
+// Applies guided filter detail enhancement technique
+// Parameters :
+// - "radius" for kernel radius
+// - "value" is for enhancement factor value
+// - "dst" is for destination image , "src" is for source image
 __host__ void guidedFilterEnhancement(Image& dst, Image& src, int radius, float value)
 {
     // Verify that sizes are the same
@@ -346,7 +385,7 @@ __host__ void guidedFilterEnhancement(Image& dst, Image& src, int radius, float 
         checkCudaErrors(cudaDeviceSynchronize());
 
         // Crop the result to get relevant data
-        crop(d_src, d_padded2, 2 * radius, 2 * radius, src.getWidth(), src.getHeight(), paddedWidth, paddedHeight, src.getChannels());
+        crop(d_src, d_padded2, 2 * radius, 2 * radius, src.getWidth(), src.getHeight(), paddedWidth, src.getChannels());
 
         grid_dim.x = (src.getWidth() * src.getChannels() + block_dim.x - 1) / block_dim.x;
         grid_dim.y = (src.getHeight() + block_dim.y - 1) / block_dim.y;
@@ -366,5 +405,50 @@ __host__ void guidedFilterEnhancement(Image& dst, Image& src, int radius, float 
         checkCudaErrors(cudaFree(d_padded2));
         checkCudaErrors(cudaFree(d_ak));
         checkCudaErrors(cudaFree(d_bk));
+    }
+}
+
+
+// Binarizes an image based on the value of a specified channel (Wrapper function for corresponding kernel)
+// Parameters :
+// - "target_channel" is an integer that selects the channel to work on : 0 for red channel, 2 for blue, any other value for green
+// - "threshold" selects the threshold value. Values higher or equal will be white (255), other values will be black (0). "threshold" should be in [0, 255]
+// - "dst" is for destination image , "src" is for source image
+__host__ void binarize(Image& dst, Image& src, int target_channel, int threshold)
+{
+    // Verify that sizes are the same
+    if (dst.getWidth() != src.getWidth() || dst.getHeight() != src.getHeight() || dst.getChannels() != src.getChannels())
+    {
+        std::cout << "Input and output images don't have the same dimensions" << std::endl;
+        return;
+    }
+    else
+    {
+        // Initialization
+        size_t baseSize = src.getSize() * sizeof(unsigned char);
+        unsigned char* d_dst, * d_src;
+
+        // Memory allocation on device
+        checkCudaErrors(cudaMalloc((void**)&d_src, baseSize));
+        checkCudaErrors(cudaMalloc((void**)&d_dst, baseSize));
+
+        // Copy to device memory
+        checkCudaErrors(cudaMemcpy(d_src, src.getData(), baseSize, cudaMemcpyHostToDevice));
+
+        // Run device function
+        dim3 block_dim(32, 32);
+        dim3 grid_dim((src.getWidth() + block_dim.x - 1) / block_dim.x, (src.getHeight() + block_dim.y - 1) / block_dim.y);
+        clock_t timer = clock();
+        binarizeKernel << <grid_dim, block_dim >> > (d_dst, d_src, src.getWidth(), src.getHeight(), target_channel, threshold, src.getChannels());
+        checkCudaErrors(cudaGetLastError());
+        checkCudaErrors(cudaDeviceSynchronize());
+        std::cout << "Duration of binarizeKernel : " << (float)(clock() - timer) / CLOCKS_PER_SEC << " seconds" << std::endl;
+
+        // Retrieve result to host memory
+        checkCudaErrors(cudaMemcpy(dst.getData(), d_dst, baseSize, cudaMemcpyDeviceToHost));
+
+        // Free memory
+        checkCudaErrors(cudaFree(d_src));
+        checkCudaErrors(cudaFree(d_dst));
     }
 }

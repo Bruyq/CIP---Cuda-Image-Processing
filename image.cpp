@@ -2,7 +2,8 @@
 
 // Image object constructor
 // Loads an image from file and create an Image object
-// Parameter : filename (char_ptr)
+// Parameter : 
+// filename (char_ptr)
 Image::Image(char* filename)
 {
     m_data = stbi_load(filename, &m_width, &m_height, &m_channels, 3);
@@ -15,7 +16,8 @@ Image::Image(char* filename)
 
 // Image object constructor
 // Creates an Image object
-// Parameter : width (int), height (int), number of channels (int)
+// Parameter :
+// width (int), height (int), number of channels (int)
 Image::Image(int width, int height, int channels)
 {
     m_width = width;

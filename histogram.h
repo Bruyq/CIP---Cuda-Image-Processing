@@ -5,6 +5,7 @@
 #include <fstream>
 
 
+// Class for CPU operations on image histogram
 class Histogram
 {
 private:

@@ -19,6 +19,8 @@ __host__ void replicate(unsigned char* d_dest, unsigned char* d_src, int width, 
 
 __host__ void crop(Image& dst, Image& src, int posX, int posY, int width, int height);
 
-__host__ void crop(unsigned char* d_dest, unsigned char* d_src, int posX, int posY, int width, int height, int widthInit, int heightInit, int channels = 3);
+__host__ void crop(unsigned char* d_dest, unsigned char* d_src, int posX, int posY, int width, int height, int widthInit, int channels = 3);
+
+__host__ void binarize(Image& dst, Image& src, int target_channel, int threshold);
 
 #endif // WRAPPER_CUH

@@ -23,4 +23,6 @@ __global__ void replicateKernel(unsigned char* dest, const unsigned char* src, i
 
 __global__ void cropKernel(unsigned char* dest, const unsigned char* src, int posX, int posY, int width, int height, int widthInit, int channels = 3);
 
+__global__ void binarizeKernel(unsigned char* dest, unsigned char* src, int width, int height, int target_channel, int threshold, int channels = 3);
+
 #endif // KERNEL_CUH
