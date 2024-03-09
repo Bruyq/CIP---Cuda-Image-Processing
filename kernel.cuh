@@ -25,4 +25,6 @@ __global__ void cropKernel(unsigned char* dest, const unsigned char* src, int po
 
 __global__ void binarizeKernel(unsigned char* dest, unsigned char* src, int width, int height, int target_channel, int threshold, int channels = 3);
 
+__global__ void maskingKernel(unsigned char* dest, const unsigned char* src, const unsigned char* mask, int width, int height, int channels = 3);
+
 #endif // KERNEL_CUH

@@ -23,4 +23,7 @@ __host__ void crop(unsigned char* d_dest, unsigned char* d_src, int posX, int po
 
 __host__ void binarize(Image& dst, Image& src, int target_channel, int threshold);
 
+__host__ void masking(Image& dst, Image& src, Image& mask);
+
+
 #endif // WRAPPER_CUH

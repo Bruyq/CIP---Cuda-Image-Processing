@@ -1,5 +1,7 @@
 #include "helperfunc.h"
 
+// File selection window function
+// Opens a window in which one can choose the file to open
 TCHAR* getFilename()
 {
     LPSTR filebuff = new char[256];

@@ -452,3 +452,50 @@ __host__ void binarize(Image& dst, Image& src, int target_channel, int threshold
         checkCudaErrors(cudaFree(d_dst));
     }
 }
+
+
+// Masks image by applying "mask" to "src" image (Wrapper function for corresponding kernel)
+// Parameters :
+// - "mask" image should contain black or white pixels (0 or 255). It will be used as a reference to mask the data in "src" in order to get "dst" (the result)
+// - "dst" is for destination image , "src" is for source image
+__host__ void masking(Image& dst, Image& src, Image& mask)
+{
+    // Verify that sizes are the same
+    if (dst.getWidth() != src.getWidth() || dst.getHeight() != src.getHeight() || dst.getChannels() != src.getChannels())
+    {
+        std::cout << "Input and output images don't have the same dimensions" << std::endl;
+        return;
+    }
+    else
+    {
+        // Initialization
+        size_t baseSize = src.getSize() * sizeof(unsigned char);
+        unsigned char* d_dst, * d_src, *d_mask;
+
+        // Memory allocation on device
+        checkCudaErrors(cudaMalloc((void**)&d_src, baseSize));
+        checkCudaErrors(cudaMalloc((void**)&d_mask, baseSize));
+        checkCudaErrors(cudaMalloc((void**)&d_dst, baseSize));
+
+        // Copy to device memory
+        checkCudaErrors(cudaMemcpy(d_src, src.getData(), baseSize, cudaMemcpyHostToDevice));
+        checkCudaErrors(cudaMemcpy(d_mask, mask.getData(), baseSize, cudaMemcpyHostToDevice));
+
+        // Run device function
+        dim3 block_dim(32, 32);
+        dim3 grid_dim((src.getWidth() * src.getChannels() + block_dim.x - 1) / block_dim.x, (src.getHeight() + block_dim.y - 1) / block_dim.y);
+        clock_t timer = clock();
+        maskingKernel << <grid_dim, block_dim >> > (d_dst, d_src, d_mask, src.getWidth(), src.getHeight(), src.getChannels());
+        checkCudaErrors(cudaGetLastError());
+        checkCudaErrors(cudaDeviceSynchronize());
+        std::cout << "Duration of maskingKernel : " << (float)(clock() - timer) / CLOCKS_PER_SEC << " seconds" << std::endl;
+
+        // Retrieve result to host memory
+        checkCudaErrors(cudaMemcpy(dst.getData(), d_dst, baseSize, cudaMemcpyDeviceToHost));
+
+        // Free memory
+        checkCudaErrors(cudaFree(d_src));
+        checkCudaErrors(cudaFree(d_mask));
+        checkCudaErrors(cudaFree(d_dst));
+    }
+}

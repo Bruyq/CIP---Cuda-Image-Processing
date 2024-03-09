@@ -6,7 +6,7 @@
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
 
-// Nvidia geForce gtx970 4GB : compute capability is 5.2
+// Device is Nvidia geForce gtx970 4GB : compute capability is 5.2
 // Maximum number of threads per block : 1024
 // Maximum x or y dimensionality of a block : 1024
 // Maximum z-dimension of a block : 64
@@ -20,10 +20,10 @@ int main()
     Image img(name);
     int radius = 7;
     Image res(img.getWidth(), img.getHeight(), img.getChannels());
-    
 
     // Process image
     binarize(res, img, 0, 120);
+    masking(res, img, res);
 
     // File saving routine
     char dest[50];
