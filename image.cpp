@@ -17,13 +17,33 @@ Image::Image(char* filename)
 // Image object constructor
 // Creates an Image object
 // Parameter :
-// width (int), height (int), number of channels (int)
+// - width (int), height (int), number of channels (int)
 Image::Image(int width, int height, int channels)
 {
     m_width = width;
     m_height = height;
     m_channels = channels;
     m_data = new unsigned char[m_width * m_height * m_channels];
+}
+
+// Image copy constructor
+// Creates an Image object by copying another. Mandatory in order to have function returning Image objects
+// Parameter :
+// - "img" is the image to copy
+Image::Image(Image& img)
+{
+    m_width = img.m_width;
+    m_height = img.m_height;
+    m_channels = img.m_channels;
+    m_data = new unsigned char[m_width * m_height * m_channels];
+    for (int y = 0; y < m_height; y++)
+    {
+        for (int x = 0; x < m_width; x++)
+        {
+            for (int c = 0; c < m_channels; c++)
+                m_data[(y * m_width + x) * m_channels + c] = img.m_data[(y * m_width + x) * m_channels + c];
+        }
+    }
 }
 
 // Image object destructor
@@ -111,4 +131,26 @@ void Image::save(const char* filename)
     stbi_write_png(filename, m_width, m_height, m_channels, m_data, m_width * m_channels); 
     // Sometimes this function isn't working properly, 1 channel image or image with low dimensions.
     // Why ? Tested without any kernel applied, so the problem comes from this routine
+}
+
+
+// Assignement operator
+// Enables assignement. Can be used for copy.
+// Parameter :
+// - "img" is the image from which data is copied
+void Image::operator=(Image const &img)
+{
+    m_width = img.m_width;
+    m_height = img.m_height;
+    m_channels = img.m_channels;
+    delete[] m_data;
+    m_data = new unsigned char[m_width * m_height * m_channels];
+    for (int y = 0; y < m_height; y++)
+    {
+        for (int x = 0; x < m_width; x++)
+        {
+            for(int c = 0; c < m_channels; c++)
+            m_data[(y * m_width + x) * m_channels + c] = img.m_data[(y * m_width + x) * m_channels + c];
+        }
+    }
 }

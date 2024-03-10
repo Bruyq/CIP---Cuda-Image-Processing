@@ -19,6 +19,7 @@ protected:
 public:
 	Image(char* filename);
 	Image(int width = 1, int height = 1, int channels = 1);
+	Image(Image& img);
 	~Image();
 	int getWidth();
 	int getHeight();
@@ -28,5 +29,7 @@ public:
 	void saveDataInPPM(const char* filename);
 	unsigned char* getData();
 	void save(const char* filename);
+	
+	void operator=(Image const &img);
 };
 #endif
