@@ -1,10 +1,7 @@
-#include "helperfunc.h"
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "wrapper.cuh"
+#include "helperfunc.h"
 
-#include "cuda_runtime.h"
-#include "device_launch_parameters.h"
 
 // Device is Nvidia geForce gtx970 4GB : compute capability is 5.2
 // Maximum number of threads per block : 1024
@@ -19,16 +16,20 @@ int main()
     char* name = getFilename();
     Image img(name);
     int radius = 7;
+    int threshold = 10;
+    int target_canal = 0;
+    float enhancement_factor = 1.5;
     Image res(img.getWidth(), img.getHeight(), img.getChannels());
 
-    // Process image
-    binarize(res, img, 0, 120);
-    masking(res, img, res);
+    // Process image with available functions in wrapper.cuh
+    laplacianFilter(res, img);
+    binarize(res, res, target_canal, threshold);
 
     // File saving routine
     char dest[50];
     strcpy(dest, saveDir);
     strcat(dest, "res.png");
+    //res = img; Could work but when deletion occurs, error arise. There is certainly multiple deletion of same memory space
     res.save(dest);
 
     return 0;
