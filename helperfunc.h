@@ -8,9 +8,9 @@
 #include <iostream>
 #include "wrapper.cuh"
 
-TCHAR* getFilename();
+void getFilename(char* pathbuffer, char* msg = "Select a file");
 
-TCHAR* getFolder(char* msg);
+void getFolder(char* pathbuffer, char* msg = "Select a folder");
 
 Image selectOperation(Image img);
 

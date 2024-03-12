@@ -18,15 +18,18 @@ int main()
 
     // Initialization
     bool flag = true;
+    char* name = new char[MAX_PATH];
     std::string result_name = "a";
     //char* saveDir = "D:/TRAVAIL/Post/results/";
-    char* saveDir = getFolder("Select a folder where result images will be saved\0");
+    char* saveDir = new char[MAX_PATH];
+    getFolder(saveDir, "Select a folder where result images will be saved\0");
+    int b = 0;
 
     while (flag)
     {
         // File reading routine
         std::cout << "Please choose an image to work on :" << std::endl;
-        char* name = getFilename();
+        getFilename(name, "Select An Image File\0");
         Image img(name);
         Image res(img.getWidth(), img.getHeight(), img.getChannels());
 
@@ -38,9 +41,10 @@ int main()
         strcpy(dest, saveDir);
         std::cout << "Please enter the name of the file in which you want to save the result (wihout file extension) :" << std::endl;
         std::cin >> result_name;
+        strcat(dest,"/");
         strcat(dest, result_name.c_str());
         strcat(dest, ".png");
-        res.save(dest); // ISSUE WITH THIS PATH, CHAR* SEEM TO BE CHANGING WITHOUT ANY ASSIGNEMENT ???
+        res.save(dest);
 
         // Do we want to end the demo ?
         std::cout << "Do you want to keep using this demo ? [y/n]" << std::endl;
@@ -55,5 +59,9 @@ int main()
         }
     }
     
+    // Deletion of char pointers used to get names when opening and saving files
+    delete[] name;
+    delete[] saveDir;
+
     return 0;
 }

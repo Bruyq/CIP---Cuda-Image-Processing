@@ -2,33 +2,30 @@
 
 // File selection window function
 // Opens a window in which one can choose the file to open
-TCHAR* getFilename()
+void getFilename(char* pathbuffer, char* msg)
 {
     // Initialize a OPENFILENAME object
-    TCHAR filebuff[MAX_PATH];
     OPENFILENAME open = { 0 };
     open.lStructSize = sizeof(OPENFILENAME);
     open.hwndOwner = NULL;
     open.lpstrFilter = "Image Files(.jpg|.png|.bmp|.jpeg)\0*.jpg;*.png;*.bmp;*.jpeg\0\0";
     open.lpstrCustomFilter = NULL;
-    open.lpstrFile = filebuff;
+    open.lpstrFile = pathbuffer;
     open.lpstrFile[0] = '\0';
     open.nMaxFile = 256;
     open.nFilterIndex = 1;
     open.lpstrInitialDir = NULL;
-    open.lpstrTitle = "Select An Image File\0";
-    open.nMaxFileTitle = strlen("Select an image file\0");
+    open.lpstrTitle = msg;
+    open.nMaxFileTitle = strlen(msg);
     open.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_EXPLORER;
 
     // Open dialog window using the OPENFILENAME object, handle different cases
     if (GetOpenFileName(&open) == TRUE)
     {
-        return open.lpstrFile;
     }
     else
     {
         std::cout << "Cannot open the file" << std::endl;
-        return NULL;
     }
 }
 
@@ -36,11 +33,11 @@ TCHAR* getFilename()
 // Folder selection window function
 // Opens a window in which one can choose the folder to select
 // Parameter :
+// - "pathbuffer" char ptr to the memory space where to save the folder path
 // - "msg" message to display in dialog window
-TCHAR* getFolder(char* msg)
+void getFolder(char* pathbuffer, char* msg)
 {
     // Initialize a BROWSEINFOA object
-    TCHAR pathbuff[MAX_PATH];
     TCHAR folder_name[MAX_PATH];
     BROWSEINFOA bInfo = { 0 };
     bInfo.hwndOwner = NULL;
@@ -55,8 +52,7 @@ TCHAR* getFolder(char* msg)
     {
         pidl = SHBrowseForFolderA(&bInfo);
     }
-    SHGetPathFromIDList(pidl, pathbuff);
-    return pathbuff;
+    SHGetPathFromIDList(pidl, pathbuffer);
 }
 
 
@@ -217,10 +213,13 @@ Image selectOperation(Image img)
         // Masking
         case 7:
         {
+            char* maskname = new char[MAX_PATH];
             std::cout << "Please select mask image :" << std::endl;
-            Image mask(getFilename());
+            getFilename(maskname, "Select the mask for the masking operation\0");
+            Image mask(maskname);
             Image res(img.getWidth(), img.getHeight(), img.getChannels());
             masking(res, img, mask);
+            delete[] maskname;
             return res;
         }
         case 8:
