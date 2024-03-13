@@ -13,17 +13,16 @@ int main()
 {
     // Welcome message
     std::cout << "Hello World !\n" << "Welcome to this demo of some of image processing techniques I implemented with CUDA\n" <<
-        "Device used while coding this was an Nvidia geForce gtx970 4GB with CUDA compute capability of 5.2\n" << 
-        "Operating system used is windows and this demo makes calls to the win32 API\n" << std::endl;
+        "Device used while coding this demo was an Nvidia geForce gtx970 4GB with CUDA compute capability of 5.2\n" << 
+        "Operating system used was windows and this demo makes calls to the win32 API\n" << std::endl;
 
     // Initialization
     bool flag = true;
     char* name = new char[MAX_PATH];
     std::string result_name = "a";
-    //char* saveDir = "D:/TRAVAIL/Post/results/";
+    //char* saveDir = "D:/TRAVAIL/Post/CIP/evalset/";
     char* saveDir = new char[MAX_PATH];
     getFolder(saveDir, "Select a folder where result images will be saved\0");
-    int b = 0;
 
     while (flag)
     {
