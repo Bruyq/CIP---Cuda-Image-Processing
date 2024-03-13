@@ -34,6 +34,7 @@ By executing this project, you should go through the following steps :
 
 ### Results example
 | Initial image | Guided filter smoothing|
+| :---: | :---: |
 |![flower](https://github.com/Bruyq/CIP---Cuda-Image-Processing/assets/162017415/30df5b4c-9c4c-45c2-a5f1-43ff51b9b398)|![guidedsmoothing](https://github.com/Bruyq/CIP---Cuda-Image-Processing/assets/162017415/a589942c-4b3a-44b2-9ed1-fafdb0b960cd)|
 
 ## TODO
