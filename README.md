@@ -9,10 +9,12 @@ The goal is to add some basic image processing tools, as well as some more compl
 ## How to use this repository/demo
 ### Code
 You can either reuse my code for your own goals freely or run it on your device to see what I made and how it works.
-This project uses **win32 API** windows for the demo. Therefore, you might not be able to run the demo on other operating systems.
-This project was coded using a **Nvidia GTX970 4GB graphic card** of **compute capability 5.2** and **CUDA Version 12.4**.
-This is important as you need an Nvidia card to make this program work and if your CUDA version or compute capability is older than what is mentionned, it may not work.
-Also, keep in mind that some functionalities now exist in CUDA that didn't under compute capability 5.2, which explains some choices I made in my CUDA kernels.
+> [!IMPORTANT]
+> This project uses **win32 API** windows for the demo. Therefore, you might not be able to run the demo on other operating systems.
+> This project was coded using a **Nvidia GTX970 4GB graphic card** of **compute capability 5.2** and **CUDA Version 12.4**.
+> [!NOTE]
+> This is important as you need an Nvidia card to make this program work and if your CUDA version or compute capability is older than what is mentionned, it may not work.
+> Also, keep in mind that some functionalities now exist in CUDA that didn't under compute capability 5.2, which explains some choices I made in my CUDA kernels.
 
 ### Demo
 By executing this project, you should go through the following steps :
@@ -25,10 +27,10 @@ By executing this project, you should go through the following steps :
 
 
 ## TODO
-- [] Implement histogram related CUDA kernels and functions
-- [] Add better error handling to have a more complete demo (Unexpected behavior with command windows, kernels too long to execute returning error 701 when the GPU isn't powerful enough)
-- [] Improve the quality of life and the form of the demo (Render the current image on screen, display options in win32 API windows, etc.)
-- [] Search for cool traditional computer vision methods that can be implemented using CUDA and implement them
+- [ ] Implement histogram related CUDA kernels and functions
+- [ ] Add better error handling to have a more complete demo (Unexpected behavior with command windows, kernels too long to execute returning error 701 when the GPU isn't powerful enough)
+- [ ] Improve the quality of life and the form of the demo (Render the current image on screen, display options in win32 API windows, etc.)
+- [ ] Search for cool traditional computer vision methods that can be implemented using CUDA and implement them
 
 
 ## Known issues
