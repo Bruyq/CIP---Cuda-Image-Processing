@@ -32,7 +32,9 @@ By executing this project, you should go through the following steps :
  6. Finally, the command window will ask you if you want to keep using the demo (yes[y] / no[n]). By entering "n" the program finishes but if you select "y" the program will return to the second step.
      ![Step 6](https://github.com/Bruyq/CIP---Cuda-Image-Processing/assets/162017415/65f6681c-bbba-47ec-9f63-fc7e6654a0ea)
 
-
+### Results example
+| Initial image | Guided filter smoothing|
+|![flower](https://github.com/Bruyq/CIP---Cuda-Image-Processing/assets/162017415/30df5b4c-9c4c-45c2-a5f1-43ff51b9b398)|![guidedsmoothing](https://github.com/Bruyq/CIP---Cuda-Image-Processing/assets/162017415/a589942c-4b3a-44b2-9ed1-fafdb0b960cd)|
 
 ## TODO
 - [ ] Implement histogram related CUDA kernels and functions
@@ -46,6 +48,10 @@ By executing this project, you should go through the following steps :
 - stb library doesn't work properly when images have a very very low resolution and doesn't work either with 1 channel images (8 bit). I don't know if it comes from me using the library in an unexpected way or if it is a known issue.
 
 
-### Sources
+## Sources
 - Guided Filter : https://kaiminghe.github.io/publications/pami12guidedfilter.pdf  
 He, K.; Sun, J.; Tang, X. Guided Image Filtering. IEEE Transactions on Pattern Analysis and MachineIntelligence 2013,35, 1397–1409
+
+
+
+
