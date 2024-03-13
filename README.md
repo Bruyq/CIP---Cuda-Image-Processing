@@ -46,6 +46,6 @@ By executing this project, you should go through the following steps :
 - stb library doesn't work properly when images have a very very low resolution and doesn't work either with 1 channel images (8 bit). I don't know if it comes from me using the library in an unexpected way or if it is a known issue.
 
 
-# Sources
+### Sources
 - Guided Filter : https://kaiminghe.github.io/publications/pami12guidedfilter.pdf  
 He, K.; Sun, J.; Tang, X. Guided Image Filtering. IEEE Transactions on Pattern Analysis and MachineIntelligence 2013,35, 1397–1409
